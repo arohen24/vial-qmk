@@ -23,10 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #endif
 
 /* period of quick tap(ms) */
-#ifndef QUICK_TAP_TERM
-#    define QUICK_TAP_TERM TAPPING_TERM
-#elif QUICK_TAP_TERM > TAPPING_TERM
-#    undef QUICK_TAP_TERM
+#if !defined(QUICK_TAP_TERM) || QUICK_TAP_TERM > TAPPING_TERM
 #    define QUICK_TAP_TERM TAPPING_TERM
 #endif
 
