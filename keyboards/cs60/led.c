@@ -212,3 +212,13 @@ void post_process_record_user(uint16_t keycode, keyrecord_t *record) {
         }
     }
 }
+
+void matrix_init_pins(void){
+    AFIO->MAPR |= AFIO_MAPR_SWJ_CFG_JTAGDISABLE;
+
+    palSetGroupMode(GPIOA, (1<<15|1<<2), 0, PAL_MODE_INPUT_PULLUP);
+    palSetGroupMode(GPIOB, 0b1111111100111011, 0, PAL_MODE_INPUT_PULLUP);
+
+    static LED_TYPE RGBLIGHT_COLOR_OFF   = { .r = 0, .g = 0, .b = 0 };
+    ws2812_setleds(&RGBLIGHT_COLOR_OFF,1);
+}

@@ -1,5 +1,6 @@
 # project specific files
-SRC ?=	matrix.c led.c
+# SRC ?=	matrix.c led.c
+SRC ?=	led.c
 
 # MCU name
 # MCU = STM32F103
@@ -12,7 +13,7 @@ BOOTLOADER = custom
 # Build Options
 #   change yes to no to disable
 #
-CUSTOM_MATRIX           = yes # Custom matrix file
+# CUSTOM_MATRIX           = yes # Custom matrix file
 UNICODE_ENABLE          = yes # Unicode
 # BOOTMAGIC_ENABLE = no       # Enable Bootmagic Lite
 # MOUSEKEY_ENABLE = yes       # Mouse keys
