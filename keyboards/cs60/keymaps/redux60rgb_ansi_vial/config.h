@@ -16,7 +16,7 @@
 // #endif
 #define DYNAMIC_KEYMAP_LAYER_COUNT    6
 #define FLASH_KEYMAP_COUNT    4
-#define VIAL_KEYBOARD_UID    {0x2E, 0xE6, 0x0E, 0x23, 0x34, 0xEF, 0x99, 0x37}
+#define VIAL_KEYBOARD_UID {0x07, 0xB7, 0xB0, 0x85, 0xA8, 0x28, 0x7D, 0x4D}
 
 #undef  RGBLIGHT_LIMIT_VAL
 #define RGBLIGHT_LIMIT_VAL    96
