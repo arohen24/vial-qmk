@@ -98,11 +98,11 @@ const uint8_t k_led_matrix_split[2] = LED_MATRIX_SPLIT;
 
 EECONFIG_DEBOUNCE_HELPER(led_matrix, EECONFIG_LED_MATRIX, led_matrix_eeconfig);
 
+void led_matrix_increase_val_helper(bool write_to_eeprom);
+
 void eeconfig_update_led_matrix(void) {
     eeconfig_flush_led_matrix(true);
 }
-
-void led_matrix_increase_val_helper(bool write_to_eeprom);
 
 void eeconfig_update_led_matrix_default(void) {
     dprintf("eeconfig_update_led_matrix_default\n");
@@ -175,6 +175,9 @@ void led_matrix_handle_key_event(uint8_t row, uint8_t col, bool pressed) {
 #ifndef LED_MATRIX_SPLIT
     if (!is_keyboard_master()) return;
 #endif
+#if LED_MATRIX_TIMEOUT > 0
+    led_anykey_timer = 0;
+#endif // LED_MATRIX_TIMEOUT > 0
 
 #ifdef LED_MATRIX_KEYREACTIVE_ENABLED
     uint8_t led[LED_HITS_TO_REMEMBER];
@@ -238,6 +241,17 @@ static void led_task_timers(void) {
     uint32_t deltaTime = sync_timer_elapsed32(led_timer_buffer);
 #endif // defined(LED_MATRIX_KEYREACTIVE_ENABLED)
     led_timer_buffer = sync_timer_read32();
+
+    // Update double buffer timers
+#if LED_MATRIX_TIMEOUT > 0
+    if (led_anykey_timer < UINT32_MAX) {
+        if (UINT32_MAX - deltaTime < led_anykey_timer) {
+            led_anykey_timer = UINT32_MAX;
+        } else {
+            led_anykey_timer += deltaTime;
+        }
+    }
+#endif // LED_MATRIX_TIMEOUT > 0
 
     // Update double buffer last hit timers
 #ifdef LED_MATRIX_KEYREACTIVE_ENABLED
@@ -463,6 +477,12 @@ void led_matrix_init(void) {
         last_hit_buffer.tick[i] = UINT16_MAX;
     }
 #endif // LED_MATRIX_KEYREACTIVE_ENABLED
+
+    if (!eeconfig_is_enabled()) {
+        dprintf("led_matrix_init_drivers eeconfig is not enabled.\n");
+        eeconfig_init();
+        eeconfig_update_led_matrix_default();
+    }
 
     eeconfig_init_led_matrix();
     if (!led_matrix_eeconfig.mode) {
