@@ -203,6 +203,7 @@ static void usb_event_cb(USBDriver *usbp, usbevent_t event) {
         case USB_EVENT_RESET:
             usb_event_queue_enqueue(event);
             chSysLockFromISR();
+            if (event == USB_EVENT_RESET) keyboard_protocol = 1;
             for (int i = 0; i < USB_ENDPOINT_IN_COUNT; i++) {
                 usb_endpoint_in_suspend_cb(&usb_endpoints_in[i]);
             }
@@ -363,30 +364,35 @@ void init_usb_driver(USBDriver *usbp) {
     usbConnectBus(usbp);
 }
 
-__attribute__((weak)) void restart_usb_driver(USBDriver *usbp) {
-    usbDisconnectBus(usbp);
-    usbStop(usbp);
+// __attribute__((weak)) void restart_usb_driver(USBDriver *usbp) {
+//     usbDisconnectBus(usbp);
+//     usbStop(usbp);
 
-    for (int i = 0; i < USB_ENDPOINT_IN_COUNT; i++) {
-        usb_endpoint_in_stop(&usb_endpoints_in[i]);
-    }
+//     for (int i = 0; i < USB_ENDPOINT_IN_COUNT; i++) {
+//         usb_endpoint_in_stop(&usb_endpoints_in[i]);
+//     }
 
-    for (int i = 0; i < USB_ENDPOINT_OUT_COUNT; i++) {
-        usb_endpoint_out_stop(&usb_endpoints_out[i]);
-    }
+//     for (int i = 0; i < USB_ENDPOINT_OUT_COUNT; i++) {
+//         usb_endpoint_out_stop(&usb_endpoints_out[i]);
+//     }
 
-    wait_ms(50);
+//     wait_ms(50);
 
-    for (int i = 0; i < USB_ENDPOINT_IN_COUNT; i++) {
-        usb_endpoint_in_init(&usb_endpoints_in[i]);
-        usb_endpoint_in_start(&usb_endpoints_in[i]);
-    }
+//     for (int i = 0; i < USB_ENDPOINT_IN_COUNT; i++) {
+//         usb_endpoint_in_init(&usb_endpoints_in[i]);
+//         usb_endpoint_in_start(&usb_endpoints_in[i]);
+//     }
 
-    for (int i = 0; i < USB_ENDPOINT_OUT_COUNT; i++) {
-        usb_endpoint_out_init(&usb_endpoints_out[i]);
-        usb_endpoint_out_start(&usb_endpoints_out[i]);
-    }
+//     for (int i = 0; i < USB_ENDPOINT_OUT_COUNT; i++) {
+//         usb_endpoint_out_init(&usb_endpoints_out[i]);
+//         usb_endpoint_out_start(&usb_endpoints_out[i]);
+//     }
 
+//     usbStart(usbp, &usbcfg);
+//     usbConnectBus(usbp);
+// }
+
+__attribute__((weak)) void usb_start(USBDriver *usbp) {
     usbStart(usbp, &usbcfg);
     usbConnectBus(usbp);
 }

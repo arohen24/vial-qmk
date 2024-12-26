@@ -122,6 +122,10 @@ const rgb_matrix_driver_t rgb_matrix_driver = {
     .flush         = is31fl3746a_flush,
     .set_color     = is31fl3746a_set_color,
     .set_color_all = is31fl3746a_set_color_all,
+#        if defined(RGB_MATRIX_DRIVER_SHUTDOWN_ENABLE)
+    .shutdown = snled27351_shutdown,
+    .exit_shutdown = snled27351_exit_shutdown
+#        endif
 };
 
 #elif defined(RGB_MATRIX_SNLED27351)

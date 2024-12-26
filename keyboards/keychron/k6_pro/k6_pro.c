@@ -51,7 +51,15 @@ key_combination_t key_comb_list[4] = {
 bool firstDisconnect = true;
 bool                   bt_factory_reset = false;
 static virtual_timer_t pairing_key_timer;
-extern uint8_t         g_pwm_buffer[DRIVER_COUNT][192];
+
+typedef struct snled27351_driver_t {
+    uint8_t pwm_buffer[192];
+    bool    pwm_buffer_dirty;
+    uint8_t led_control_buffer[192];
+    bool    led_control_buffer_dirty;
+} PACKED snled27351_driver_t;
+
+extern snled27351_driver_t driver_buffers[DRIVER_COUNT];
 
 static void pairing_key_timer_cb(void *arg) {
     bluetooth_pairing_ex(*(uint8_t *)arg, NULL);
@@ -243,7 +251,7 @@ void battery_calculte_voltage(uint16_t value) {
 
         for (uint8_t i = 0; i < DRIVER_COUNT; i++)
             for (uint8_t j = 0; j < 192; j++)
-                totalBuf += g_pwm_buffer[i][j];
+                totalBuf += driver_buffers[i].pwm_buffer[j];
         /* We assumpt it is linear relationship*/
         voltage += (30 * totalBuf / LED_MATRIX_LED_COUNT / 255);
     }
@@ -254,7 +262,7 @@ void battery_calculte_voltage(uint16_t value) {
 
         for (uint8_t i = 0; i < DRIVER_COUNT; i++)
             for (uint8_t j = 0; j < 192; j++)
-                totalBuf += g_pwm_buffer[i][j];
+                totalBuf += driver_buffers[i].pwm_buffer[j];
         /* We assumpt it is linear relationship*/
         uint32_t compensation = 60 * totalBuf / RGB_MATRIX_LED_COUNT / 255 / 3;
         voltage += compensation;
