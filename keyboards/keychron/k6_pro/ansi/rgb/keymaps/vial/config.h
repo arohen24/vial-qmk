@@ -1,0 +1,9 @@
+#pragma once
+
+#define QUICK_TAP_TERM 0
+#define TAPPING_TERM 150
+
+#define VIAL_KEYBOARD_UID {0xA5, 0x8E, 0xE1, 0x42, 0xC9, 0x22, 0x73, 0x14}
+
+#define RGB_MATRIX_FRAMEBUFFER_EFFECTS
+#define RGB_MATRIX_KEYPRESSES
