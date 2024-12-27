@@ -172,6 +172,9 @@ void rgb_matrix_handle_key_event(uint8_t row, uint8_t col, bool pressed) {
 #ifndef RGB_MATRIX_SPLIT
     if (!is_keyboard_master()) return;
 #endif
+#if RGB_MATRIX_TIMEOUT > 0
+    rgb_anykey_timer = 0;
+#endif // RGB_MATRIX_TIMEOUT > 0
 
 #ifdef RGB_MATRIX_KEYREACTIVE_ENABLED
     uint8_t led[LED_HITS_TO_REMEMBER];
@@ -266,6 +269,13 @@ static void rgb_task_timers(void) {
     uint32_t deltaTime = sync_timer_elapsed32(rgb_timer_buffer);
 #endif // defined(RGB_MATRIX_KEYREACTIVE_ENABLED)
     rgb_timer_buffer = sync_timer_read32();
+
+    // Update double buffer timers
+#if RGB_MATRIX_TIMEOUT > 0
+    if (rgb_anykey_timer + deltaTime <= UINT32_MAX) {
+        rgb_anykey_timer += deltaTime;
+    }
+#endif // RGB_MATRIX_TIMEOUT > 0
 
     // Update double buffer last hit timers
 #ifdef RGB_MATRIX_KEYREACTIVE_ENABLED
@@ -500,6 +510,12 @@ void rgb_matrix_init(void) {
         last_hit_buffer.tick[i] = UINT16_MAX;
     }
 #endif // RGB_MATRIX_KEYREACTIVE_ENABLED
+
+    if (!eeconfig_is_enabled()) {
+        dprintf("rgb_matrix_init_drivers eeconfig is not enabled.\n");
+        eeconfig_init();
+        eeconfig_update_rgb_matrix_default();
+    }
 
     eeconfig_init_rgb_matrix();
     if (!rgb_matrix_config.mode) {
