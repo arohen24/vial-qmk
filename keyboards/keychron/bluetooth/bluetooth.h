@@ -18,6 +18,7 @@
 
 #include "bluetooth_event_type.h"
 #include "action.h"
+#include "report_buffer.h"
 
 /* Low power mode */
 #ifndef LOW_POWER_MODE
@@ -87,3 +88,12 @@ bluetooth_state_t bluetooth_get_state(void);
 void bluetooth_low_battery_shutdown(void);
 
 bool process_record_kb_bt(uint16_t keycode, keyrecord_t *record);
+
+/* declarations */
+uint8_t bluetooth_keyboard_leds(void);
+void    bluetooth_send_keyboard(report_keyboard_t *report);
+void    bluetooth_send_nkro(report_nkro_t *report);
+void    bluetooth_send_mouse(report_mouse_t *report);
+void    bluetooth_send_extra(report_extra_t *report);
+void    bluetooth_send_consumer(uint16_t data);
+// TODO: not sure why previous location works on Keychron's wireless_playground
