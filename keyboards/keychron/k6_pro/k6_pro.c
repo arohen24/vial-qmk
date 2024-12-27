@@ -77,11 +77,10 @@ bool dip_switch_update_kb(uint8_t index, bool active) {
 
 #ifdef KC_BLUETOOTH_ENABLE
 bool process_record_kb_bt(uint16_t keycode, keyrecord_t *record) {
+    static uint8_t host_idx = 0;
 #else
 bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
 #endif
-    static uint8_t host_idx = 0;
-
     switch (keycode) {
         case KC_LOPTN:
         case KC_ROPTN:
